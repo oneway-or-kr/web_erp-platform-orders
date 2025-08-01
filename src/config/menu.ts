@@ -16,6 +16,10 @@ export const menuConfig: MenuItem[] = [
                 name: "플랫폼별 주문 업로드",
                 href: "/dashboard/platform-orders",
             },
+            {
+                name: "CS 티켓 관리",
+                href: "/dashboard/cs-db",
+            },
             // 향후 추가될 메뉴들
             // {
             //     name: "재고 관리",
