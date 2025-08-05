@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Navbar() {
     const router = useRouter();
@@ -20,7 +21,10 @@ export default function Navbar() {
         <nav className="bg-white shadow-sm border-b border-gray-200">
             <div className="w-full px-2 sm:px-3 lg:px-4">
                 <div className="flex justify-between h-16">
-                    <div className="flex items-center space-x-3">
+                    <Link
+                        href="/dashboard"
+                        className="flex items-center space-x-3 hover:opacity-80 transition-opacity cursor-pointer"
+                    >
                         <Image
                             src="/oneway_logo.png"
                             alt="Oneway Logo"
@@ -31,7 +35,7 @@ export default function Navbar() {
                         <h1 className="text-xl font-semibold text-gray-900">
                             Oneway ERP 어드민 페이지
                         </h1>
-                    </div>
+                    </Link>
                     <div className="flex items-center space-x-4">
                         <span className="text-sm text-gray-700">관리자님</span>
                         <button
