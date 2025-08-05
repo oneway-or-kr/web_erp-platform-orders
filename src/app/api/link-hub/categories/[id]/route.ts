@@ -6,15 +6,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { updateCategory, deleteCategory } from "@/lib/link-hub/supabase";
 
 interface RouteParams {
-    params: {
+    params: Promise<{
         id: string;
-    };
+    }>;
 }
 
 // 카테고리 업데이트
 export async function PUT(request: NextRequest, { params }: RouteParams) {
     try {
-        const { id } = params;
+        const { id } = await params;
         const body = await request.json();
         const { name, display_order } = body;
 
@@ -43,7 +43,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 // 카테고리 삭제
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
     try {
-        const { id } = params;
+        const { id } = await params;
 
         await deleteCategory(id);
 

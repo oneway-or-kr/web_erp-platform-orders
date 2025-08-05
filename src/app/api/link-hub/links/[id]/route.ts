@@ -6,15 +6,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { updateLink, deleteLink } from "@/lib/link-hub/supabase";
 
 interface RouteParams {
-    params: {
+    params: Promise<{
         id: string;
-    };
+    }>;
 }
 
 // 링크 업데이트
 export async function PUT(request: NextRequest, { params }: RouteParams) {
     try {
-        const { id } = params;
+        const { id } = await params;
         const body = await request.json();
         const {
             title,
@@ -54,7 +54,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 // 링크 삭제
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
     try {
-        const { id } = params;
+        const { id } = await params;
 
         await deleteLink(id);
 

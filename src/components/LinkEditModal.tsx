@@ -19,7 +19,9 @@ export default function LinkEditModal({
     onSave,
     onCancel,
 }: LinkEditModalProps) {
-    const [formData, setFormData] = useState<any>({});
+    const [formData, setFormData] = useState<Record<string, string | number>>(
+        {}
+    );
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -47,14 +49,26 @@ export default function LinkEditModal({
         const newErrors: Record<string, string> = {};
 
         if (type === "category") {
-            if (!formData.name?.trim()) {
+            if (
+                !formData.name ||
+                typeof formData.name !== "string" ||
+                !formData.name.trim()
+            ) {
                 newErrors.name = "카테고리 이름은 필수입니다.";
             }
         } else {
-            if (!formData.title?.trim()) {
+            if (
+                !formData.title ||
+                typeof formData.title !== "string" ||
+                !formData.title.trim()
+            ) {
                 newErrors.title = "링크 제목은 필수입니다.";
             }
-            if (!formData.url?.trim()) {
+            if (
+                !formData.url ||
+                typeof formData.url !== "string" ||
+                !formData.url.trim()
+            ) {
                 newErrors.url = "URL은 필수입니다.";
             } else if (!isValidUrl(formData.url)) {
                 newErrors.url = "올바른 URL 형식이 아닙니다.";
@@ -121,7 +135,7 @@ export default function LinkEditModal({
         }
     };
 
-    const handleInputChange = (field: string, value: any) => {
+    const handleInputChange = (field: string, value: string | number) => {
         setFormData({ ...formData, [field]: value });
         if (errors[field]) {
             setErrors({ ...errors, [field]: "" });
