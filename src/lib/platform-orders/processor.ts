@@ -93,27 +93,8 @@ export class FileProcessor {
                 };
             }
 
-            // 네이버 파서의 경우 storeName 처리
-            let parsedData: StandardOrderData[];
-            if (platform === "naver-oneway") {
-                const naverParser = parser as {
-                    parse: (
-                        file: File,
-                        storeName: string
-                    ) => Promise<StandardOrderData[]>;
-                };
-                parsedData = await naverParser.parse(file, "원웨이");
-            } else if (platform === "naver-hygge") {
-                const naverParser = parser as {
-                    parse: (
-                        file: File,
-                        storeName: string
-                    ) => Promise<StandardOrderData[]>;
-                };
-                parsedData = await naverParser.parse(file, "휘게");
-            } else {
-                parsedData = await parser.parse(file);
-            }
+            // 모든 파서는 동일한 인터페이스 사용 (상품명 기반 자동 감지)
+            const parsedData: StandardOrderData[] = await parser.parse(file);
 
             const validationResult = parser.validate(parsedData);
 

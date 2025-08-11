@@ -99,7 +99,7 @@ export class CoupangParser {
     ): StandardOrderData {
         return {
             order_number: String(row["주문번호"] || ""),
-            order_name: String(row["등록상품명"] || ""), // 주문명으로 상품명 사용
+            order_name: String(row["구매자이름"] || ""), // 주문자명
             order_date: FileUtils.parseCoupangDate(row["주문일"]),
             receiver_name: String(row["수취인이름"] || ""),
             receiver_phone: FileUtils.formatPhone(row["수취인전화번호"]),

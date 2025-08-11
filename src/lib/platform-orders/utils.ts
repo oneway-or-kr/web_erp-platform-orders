@@ -3,7 +3,7 @@ import * as XLSX from "xlsx";
 
 export interface StandardOrderData {
     order_number: string;
-    order_name: string;
+    order_name: string; // 주문자명 (구매자명)
     order_date: string;
     receiver_name: string;
     receiver_phone: string;
@@ -42,6 +42,72 @@ export class FileUtils {
             };
             reader.onerror = () => reject(new Error("파일 읽기 실패"));
             reader.readAsBinaryString(file);
+        });
+    }
+
+    /**
+     * CSV 파일을 읽어서 데이터 배열로 변환
+     * @param file CSV 파일
+     * @returns 2차원 배열 데이터
+     */
+    static async readCSVFile(file: File): Promise<(string | number)[][]> {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const text = e.target?.result as string;
+                    // CSV 파싱 (간단한 구현)
+                    const lines = text.split("\n");
+                    const result: (string | number)[][] = [];
+
+                    for (const line of lines) {
+                        if (line.trim()) {
+                            // CSV 파싱: 따옴표로 감싸진 필드 처리
+                            const fields: (string | number)[] = [];
+                            let currentField = "";
+                            let inQuotes = false;
+
+                            for (let i = 0; i < line.length; i++) {
+                                const char = line[i];
+                                const nextChar = line[i + 1];
+
+                                if (char === '"') {
+                                    if (inQuotes && nextChar === '"') {
+                                        // 이스케이프된 따옴표
+                                        currentField += '"';
+                                        i++; // 다음 따옴표 건너뛰기
+                                    } else {
+                                        // 따옴표 시작/끝
+                                        inQuotes = !inQuotes;
+                                    }
+                                } else if (char === "," && !inQuotes) {
+                                    // 필드 구분자
+                                    const trimmed = currentField.trim();
+                                    // 숫자인지 확인
+                                    const num = Number(trimmed);
+                                    fields.push(isNaN(num) ? trimmed : num);
+                                    currentField = "";
+                                } else {
+                                    currentField += char;
+                                }
+                            }
+
+                            // 마지막 필드 추가
+                            const trimmed = currentField.trim();
+                            const num = Number(trimmed);
+                            fields.push(isNaN(num) ? trimmed : num);
+
+                            result.push(fields);
+                        }
+                    }
+
+                    resolve(result);
+                } catch (error) {
+                    reject(error);
+                }
+            };
+            reader.onerror = () => reject(new Error("CSV 파일 읽기 실패"));
+            reader.readAsText(file, "utf-8");
         });
     }
 
@@ -357,6 +423,35 @@ export class FileUtils {
         }
 
         return "";
+    }
+
+    /**
+     * 카페24 전용 날짜 파싱: 주문번호 앞 8자리를 YYYY-MM-DD로 변환
+     * @param orderNumber 카페24 주문번호 (예: "20250121-0000001")
+     * @returns YYYY-MM-DD 형식의 날짜
+     */
+    static parseCafe24Date(orderNumber: string): string {
+        if (!orderNumber) return "";
+
+        const str = String(orderNumber).trim();
+
+        // 주문번호 앞 8자리 추출 (YYYYMMDD 형식)
+        const dateString = str.substring(0, 8);
+
+        // 8자리 숫자인지 확인
+        if (!/^\d{8}$/.test(dateString)) {
+            console.warn(
+                `카페24 주문번호 형식이 올바르지 않습니다: ${orderNumber}`
+            );
+            return "";
+        }
+
+        // YYYYMMDD → YYYY-MM-DD 변환
+        const year = dateString.substring(0, 4);
+        const month = dateString.substring(4, 6);
+        const day = dateString.substring(6, 8);
+
+        return `${year}-${month}-${day}`;
     }
 
     /**

@@ -8,13 +8,9 @@ export class NaverParser {
     /**
      * 네이버 엑셀 파일을 표준 형식으로 변환
      * @param file 네이버 엑셀 파일
-     * @param storeName "원웨이" 또는 "휘게"
      * @returns 표준화된 주문 데이터 배열
      */
-    static async parse(
-        file: File,
-        storeName: "원웨이" | "휘게" = "원웨이"
-    ): Promise<StandardOrderData[]> {
+    static async parse(file: File): Promise<StandardOrderData[]> {
         try {
             const arrayBuffer = await file.arrayBuffer();
             const workbook = XLSX.read(arrayBuffer, { type: "array" });
@@ -28,6 +24,9 @@ export class NaverParser {
                 defval: "",
                 range: headerRowIndex, // 감지된 헤더 행부터 시작
             }) as Array<Record<string, string | number>>;
+
+            // 파일 전체에서 "휘게"가 포함된 상품이 있는지 확인
+            const storeName = this.detectStoreName(rows);
 
             return rows.map((row) => this.mapRowToStandardData(row, storeName));
         } catch (error) {
@@ -94,6 +93,23 @@ export class NaverParser {
     }
 
     /**
+     * 파일 전체에서 스토어명 감지 (휘게 상품이 하나라도 있으면 휘게, 없으면 원웨이)
+     * @param rows 엑셀 행 데이터 배열
+     * @returns 스토어명 ("원웨이" 또는 "휘게")
+     */
+    private static detectStoreName(
+        rows: Array<Record<string, string | number>>
+    ): string {
+        // 상품명에 "휘게"가 포함된 행이 하나라도 있는지 확인
+        const hasHyggeProduct = rows.some((row) => {
+            const productName = String(row["상품명"] || "");
+            return productName.includes("휘게");
+        });
+
+        return hasHyggeProduct ? "휘게" : "원웨이";
+    }
+
+    /**
      * 네이버 행 데이터를 표준 데이터로 변환
      * @param row 네이버 엑셀 행 데이터
      * @param storeName 스토어명
@@ -105,7 +121,7 @@ export class NaverParser {
     ): StandardOrderData {
         return {
             order_number: String(row["주문번호"] || ""),
-            order_name: String(row["상품명"] || ""), // 주문명으로 상품명 사용
+            order_name: String(row["주문자명"] || ""), // 주문자명
             order_date: FileUtils.parseNaverDate(row["결제일"]),
             receiver_name: String(row["수취인명"] || ""),
             receiver_phone: FileUtils.formatPhone(row["수취인연락처1"]),
@@ -116,7 +132,7 @@ export class NaverParser {
             quantity: Number(row["수량"]) || 0,
             final_price: FileUtils.parsePrice(row["최종 상품별 총 주문금액"]),
             platform: `네이버 ${storeName}`,
-            order_phone: "", // 네이버는 구매자 전화번호 없음
+            order_phone: FileUtils.formatPhone(row["구매자연락처"]), // 구매자 연락처
         };
     }
 

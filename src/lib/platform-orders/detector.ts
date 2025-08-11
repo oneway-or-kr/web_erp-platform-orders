@@ -27,11 +27,23 @@ export const platformNames: Record<string, string> = {
 export class FileDetector {
     /**
      * 업로드된 파일이 어떤 플랫폼의 파일인지 감지
-     * @param file 업로드된 엑셀 파일
+     * @param file 업로드된 파일 (엑셀 또는 CSV)
      * @returns 감지된 플랫폼 정보
      */
     static async detectPlatform(file: File): Promise<DetectionResult | null> {
         try {
+            // CSV 파일인 경우 카페24로 판단
+            if (
+                file.name.toLowerCase().endsWith(".csv") ||
+                file.type === "text/csv"
+            ) {
+                return {
+                    platform: "cafe24",
+                    confidence: 0.9,
+                    reason: "CSV 파일 형식",
+                };
+            }
+
             const arrayBuffer = await file.arrayBuffer();
 
             // 1단계: 파일명 기반 감지

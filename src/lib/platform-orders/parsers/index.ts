@@ -6,7 +6,7 @@ import { OhouseParser } from "./ohouse";
 import { ESMParser } from "./esm";
 import { ElevenstParser } from "./elevenst";
 import { AlwaysParser } from "./always";
-import { OwnMallParser } from "./cafe24";
+import { Cafe24Parser, OwnMallParser } from "./cafe24";
 import { KakaoParser } from "./kakao";
 import { StandardOrderData } from "../utils";
 
@@ -24,7 +24,7 @@ export const PLATFORM_PARSERS: Record<string, PlatformParser> = {
     esm: ESMParser,
     elevenst: ElevenstParser,
     always: AlwaysParser,
-    cafe24: OwnMallParser,
+    cafe24: Cafe24Parser,
     kakao: KakaoParser,
 };
 
@@ -36,6 +36,7 @@ export {
     ESMParser,
     ElevenstParser,
     AlwaysParser,
+    Cafe24Parser,
     OwnMallParser,
     KakaoParser,
 };
