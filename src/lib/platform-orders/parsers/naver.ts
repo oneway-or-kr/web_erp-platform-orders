@@ -121,7 +121,7 @@ export class NaverParser {
     ): StandardOrderData {
         return {
             order_number: String(row["주문번호"] || ""),
-            order_name: String(row["주문자명"] || ""), // 주문자명
+            order_name: String(row["구매자명"] || ""), // 주문자명
             order_date: FileUtils.parseNaverDate(row["결제일"]),
             receiver_name: String(row["수취인명"] || ""),
             receiver_phone: FileUtils.formatPhone(row["수취인연락처1"]),
@@ -155,6 +155,9 @@ export class NaverParser {
         data.forEach((item, index) => {
             if (!item.order_number) {
                 errors.push(`${index + 1}행: 주문번호가 누락되었습니다.`);
+            }
+            if (!item.order_name) {
+                errors.push(`${index + 1}행: 구매자명이 누락되었습니다.`);
             }
             if (!item.product_name) {
                 errors.push(`${index + 1}행: 상품명이 누락되었습니다.`);

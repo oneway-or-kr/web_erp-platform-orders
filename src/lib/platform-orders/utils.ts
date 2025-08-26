@@ -83,9 +83,15 @@ export class FileUtils {
                                 } else if (char === "," && !inQuotes) {
                                     // 필드 구분자
                                     const trimmed = currentField.trim();
-                                    // 숫자인지 확인
-                                    const num = Number(trimmed);
-                                    fields.push(isNaN(num) ? trimmed : num);
+                                    // 숫자로만 구성되고 빈 문자열이 아닌 경우만 숫자로 변환
+                                    if (
+                                        trimmed !== "" &&
+                                        /^\d+(\.\d+)?$/.test(trimmed)
+                                    ) {
+                                        fields.push(Number(trimmed));
+                                    } else {
+                                        fields.push(trimmed);
+                                    }
                                     currentField = "";
                                 } else {
                                     currentField += char;
@@ -94,8 +100,15 @@ export class FileUtils {
 
                             // 마지막 필드 추가
                             const trimmed = currentField.trim();
-                            const num = Number(trimmed);
-                            fields.push(isNaN(num) ? trimmed : num);
+                            // 숫자로만 구성되고 빈 문자열이 아닌 경우만 숫자로 변환
+                            if (
+                                trimmed !== "" &&
+                                /^\d+(\.\d+)?$/.test(trimmed)
+                            ) {
+                                fields.push(Number(trimmed));
+                            } else {
+                                fields.push(trimmed);
+                            }
 
                             result.push(fields);
                         }

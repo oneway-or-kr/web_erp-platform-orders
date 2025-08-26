@@ -134,6 +134,9 @@ export class TossParser {
             if (!item.order_number) {
                 errors.push(`${index + 1}행: 주문번호가 누락되었습니다.`);
             }
+            if (!item.order_name) {
+                errors.push(`${index + 1}행: 구매자명이 누락되었습니다.`);
+            }
             if (!item.product_name) {
                 errors.push(`${index + 1}행: 상품명이 누락되었습니다.`);
             }
