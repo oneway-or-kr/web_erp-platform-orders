@@ -70,7 +70,9 @@ export class Cafe24Parser {
     /**
      * 안전한 문자열 변환 (null, undefined, 숫자 0 처리)
      */
-    private static safeString(value: any): string {
+    private static safeString(
+        value: string | number | null | undefined
+    ): string {
         if (value === null || value === undefined) return "";
         if (typeof value === "number" && value === 0) return "";
         return String(value).trim();
@@ -79,7 +81,9 @@ export class Cafe24Parser {
     /**
      * 안전한 숫자 변환
      */
-    private static safeNumber(value: any): number {
+    private static safeNumber(
+        value: string | number | null | undefined
+    ): number {
         if (value === null || value === undefined || value === "") return 0;
         const num = Number(value);
         return isNaN(num) ? 0 : num;
