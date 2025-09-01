@@ -27,6 +27,16 @@ export const menuConfig: MenuItem[] = [
             // },
         ],
     },
+    {
+        name: "Marketing",
+        isCategory: true,
+        children: [
+            {
+                name: "쿠팡 자동 리뷰문자 발송 툴",
+                href: "/dashboard/review-sms",
+            },
+        ],
+    },
     // 향후 추가될 카테고리들
     // {
     //     name: "Analytics",
