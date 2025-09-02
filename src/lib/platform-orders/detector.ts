@@ -113,21 +113,19 @@ export class FileDetector {
             return "ohouse";
         }
 
-        // 토스 패턴: 파일명이 다음으로 시작하는 경우
+        // 토스 패턴: 파일명에 다음 문자열이 포함된 경우
         // - "주문내역-상품준비중"
         // - "주문내역-배송중"
-        // 확장자를 제거하고 체크
-        const filenameWithoutExt = filename.replace(/\.[^/.]+$/, "");
-        const normalizedTossFilename = filenameWithoutExt.normalize("NFC");
+        const normalizedTossFilename = filename.normalize("NFC");
         const normalizedTossTarget1 = "주문내역-상품준비중".normalize("NFC");
         const normalizedTossTarget2 = "주문내역-배송중".normalize("NFC");
         const normalizedTossTarget3 = "토스".normalize("NFC");
 
         if (
-            normalizedTossFilename.startsWith(normalizedTossTarget1) ||
-            normalizedTossFilename.startsWith(normalizedTossTarget2) ||
+            normalizedTossFilename.includes(normalizedTossTarget1) ||
+            normalizedTossFilename.includes(normalizedTossTarget2) ||
             cleanFilename.includes("toss") ||
-            filename.normalize("NFC").includes(normalizedTossTarget3)
+            normalizedTossFilename.includes(normalizedTossTarget3)
         ) {
             return "toss";
         }
