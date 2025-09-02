@@ -116,7 +116,9 @@ export class FileDetector {
         // 토스 패턴: 파일명이 다음으로 시작하는 경우
         // - "주문내역-상품준비중"
         // - "주문내역-배송중"
-        const normalizedTossFilename = filename.normalize("NFC");
+        // 확장자를 제거하고 체크
+        const filenameWithoutExt = filename.replace(/\.[^/.]+$/, "");
+        const normalizedTossFilename = filenameWithoutExt.normalize("NFC");
         const normalizedTossTarget1 = "주문내역-상품준비중".normalize("NFC");
         const normalizedTossTarget2 = "주문내역-배송중".normalize("NFC");
         const normalizedTossTarget3 = "토스".normalize("NFC");
@@ -125,7 +127,7 @@ export class FileDetector {
             normalizedTossFilename.startsWith(normalizedTossTarget1) ||
             normalizedTossFilename.startsWith(normalizedTossTarget2) ||
             cleanFilename.includes("toss") ||
-            normalizedTossFilename.includes(normalizedTossTarget3)
+            filename.normalize("NFC").includes(normalizedTossTarget3)
         ) {
             return "toss";
         }
