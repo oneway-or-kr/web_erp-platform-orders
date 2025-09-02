@@ -113,17 +113,22 @@ export class FileDetector {
             return "ohouse";
         }
 
-        // 토스 패턴: "주문내역-상품준비중-YYYY-MM-DD-YYYY-MM-DD"
+        // 토스 패턴: 
+        // - "주문내역-상품준비중-YYYY-MM-DD-YYYY-MM-DD"
+        // - "주문내역-상품준비중-YYYY-MM-DD-YYYY-MM-DD"
+        // - "주문내역-배송중-YYYY-MM-DD-YYYY-MM-DD"
         const normalizedTossFilename = filename.normalize("NFC");
         const normalizedTossTarget1 = "주문내역".normalize("NFC");
         const normalizedTossTarget2 = "상품준비중".normalize("NFC");
-        const normalizedTossTarget3 = "토스".normalize("NFC");
+        const normalizedTossTarget3 = "배송중".normalize("NFC");
+        const normalizedTossTarget4 = "토스".normalize("NFC");
 
         if (
             (normalizedTossFilename.includes(normalizedTossTarget1) &&
-                normalizedTossFilename.includes(normalizedTossTarget2)) ||
+                (normalizedTossFilename.includes(normalizedTossTarget2) ||
+                 normalizedTossFilename.includes(normalizedTossTarget3))) ||
             cleanFilename.includes("toss") ||
-            normalizedTossFilename.includes(normalizedTossTarget3)
+            normalizedTossFilename.includes(normalizedTossTarget4)
         ) {
             return "toss";
         }
